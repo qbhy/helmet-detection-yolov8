@@ -36,19 +36,23 @@ def imageLoader(folder_path):
             1. A list of all image paths in the folder.
             2. A list of all image names in the folder.
     """
-    # Get a list of all items in the folder
-    items = os.listdir(folder_path)
-    print(f"[!] Found {len(items)} images [!]")
+    try:
+        # Get a list of all items in the folder
+        items = os.listdir(folder_path)
+        print(f"[!] Found {len(items)} images [!]")
 
-    images_path_list = []
-    # Loop through each item in the folder
-    for image in items:
-        # Get the path of the item
-        item_path = os.path.join(folder_path, image)
-        images_path_list.append(item_path)
+        images_path_list = []
+        # Loop through each item in the folder
+        for image in items:
+            # Get the path of the item
+            item_path = os.path.join(folder_path, image)
+            images_path_list.append(item_path)
 
-    # Return a tuple containing the list of image paths and the list of image names
-    return (images_path_list, items)
+        # Return a tuple containing the list of image paths and the list of image names
+        return (images_path_list, items)
+    except Exception as e:
+        print(e.args)
+
 
 
 def saveResultCSV(result, output_folder_name, csv_file_name):
@@ -64,17 +68,19 @@ def saveResultCSV(result, output_folder_name, csv_file_name):
     Returns:
         None
     """
+    try:
 
-    # Combine the output folder name and CSV file name to form the full path to the CSV file
-    csv_path = os.path.join(output_folder_name, csv_file_name + ".csv")
-    with open(csv_path, "w") as f1:
-        writer = csv.writer(f1, delimiter=",")  # lineterminator='\n',
-        writer.writerow(["Image Name", "Image Location", "Status"])
-        # Loop over the results and write each row to the CSV file
-        for i in range(len(result)):
-            row = result[i]
-            writer.writerow(row)
-
+        # Combine the output folder name and CSV file name to form the full path to the CSV file
+        csv_path = os.path.join(output_folder_name, csv_file_name + ".csv")
+        with open(csv_path, "w") as f1:
+            writer = csv.writer(f1, delimiter=",")  # lineterminator='\n',
+            writer.writerow(["Image Name", "Image Location", "Status"])
+            # Loop over the results and write each row to the CSV file
+            for i in range(len(result)):
+                row = result[i]
+                writer.writerow(row)
+    except Exception as e:
+        print(e.args)
 
 def checkHeads(
     labels,

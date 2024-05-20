@@ -7,10 +7,9 @@ import sys
 from utils.helperFunctions import *
 from ultralytics import YOLO
 
-
 # source = "../RESOURCES\helmet.mp4"
 # Custom trained Model we are using for helmet detection
-model = YOLO("/Users/meryem/Downloads/Safety-Helmet-Detection-yoloV8-main/models/hemletYoloV8_100epochs.pt")
+model = YOLO("models/hemletYoloV8_100epochs.pt")
 
 # frame width and height
 frame_wid = 640
@@ -36,6 +35,7 @@ def processImages(image_path_list, image_name_list, image_storage_folder):
     csv_result_msg_final = []
 
     for i in range(len(image_path_list)):
+
         frame = cv2.imread(image_path_list[i])
 
         # print("Before Compression")
@@ -46,14 +46,23 @@ def processImages(image_path_list, image_name_list, image_storage_folder):
 
         # Use the pre-trained YOLOv5 model to detect helmets
         results = model(image)[0]
-        detections = sv.Detections.from_yolov8(results)
-        labels = [f"{model.model.names[class_id]}" for _, _, class_id, _ in detections]
+        detections = sv.Detections.from_ultralytics(results)
 
+        try:
+            labels = []
+            for detection in detections:
+                # 假设 detection 是一个包含多个值的元组或列表
+                # 并且 class_id 是第三个值
+                _, _, class_id, _, _, dict = detection
+                labels.append(dict["class_name"])
+        except Exception as e:
+            print(e.args)
+            return
         # Annotate the image with bounding boxes around the detected helmets
         image = box_annotator.annotate(
             scene=image,
-            detections=detections
-            # labels=labels
+            detections=detections,
+            labels=labels
         )
 
         # Check if the detected helmets are properly worn, and add the detection result to the output list
@@ -66,7 +75,6 @@ def processImages(image_path_list, image_name_list, image_storage_folder):
             i,
             image_storage_folder,
         )
-
         # Show the annotated image
         # cv2.imshow("Helmet Detection", image)
         # if cv2.waitKey(1) == 27:
@@ -89,12 +97,12 @@ if __name__ == "__main__":
         inter_path = sys.argv[1:]
         real_path = ""
         for path in inter_path:
-            real_path = real_path+path+" "
+            real_path = real_path + path + " "
 
         folder_path = real_path.strip()
         # folder_path = str(sys.argv[1])
         split_list = folder_path.split("\\")
-        output_folder_name = os.path.join("Result", split_list[-1])
+        output_folder_name = os.path.join("Result2", split_list[-1])
         os.makedirs(output_folder_name)
 
         image_storage_folder = os.path.join(output_folder_name, "images")
@@ -118,5 +126,6 @@ if __name__ == "__main__":
     except Exception as error:
         # Clean up output folder if an error occurs
         print("[!] Some error occured during processing [!]")
+        print(error.args)
         os.rmdir(image_storage_folder)
         os.rmdir(output_folder_name)
