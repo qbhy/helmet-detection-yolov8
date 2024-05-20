@@ -54,7 +54,6 @@ def imageLoader(folder_path):
         print(e.args)
 
 
-
 def saveResultCSV(result, output_folder_name, csv_file_name):
     """
     This function takes a list of results, an output folder name and a CSV file name as input, and saves the
@@ -82,14 +81,15 @@ def saveResultCSV(result, output_folder_name, csv_file_name):
     except Exception as e:
         print(e.args)
 
+
 def checkHeads(
-    labels,
-    image_name_list,
-    image_path_list,
-    image,
-    csv_result_msg_final,
-    i,
-    image_storage_folder,
+        labels,
+        image_name_list,
+        image_path_list,
+        image,
+        csv_result_msg_final,
+        i,
+        image_storage_folder,
 ):
     """
     This function checks if the given list of labels contains the word "head". If it does, the function saves the
@@ -109,21 +109,22 @@ def checkHeads(
     """
 
     # Looping through the results of detections
-    if "head" in labels:
-        print("head found")
-        # Getting the image name and location
-        image_name = f"{image_name_list[i]}"
-        image_loc = os.path.join(f"{image_storage_folder}/", image_name)
-        # cv2.imwrite(image_loc, image, [cv2.IMWRITE_JPEG_QUALITY, 1])
-        cv2.imwrite(image_loc, image)
+    for label in labels:
+        if label.split(" ")[0] == "head":
+            print("head found")
+            # Getting the image name and location
+            image_name = f"{image_name_list[i]}"
+            image_loc = os.path.join(f"{image_storage_folder}/", image_name)
+            # cv2.imwrite(image_loc, image, [cv2.IMWRITE_JPEG_QUALITY, 1])
+            cv2.imwrite(image_loc, image)
 
-        # print("After Compression")
-        # show_file_size(image_loc)
+            # print("After Compression")
+            # show_file_size(image_loc)
 
-        img_loc = image_path_list[i]
-        message = "No Helmet"
+            img_loc = image_path_list[i]
+            message = "No Helmet"
 
-        # Generating the message to store in csv file
-        csv_result_msg_final.append([image_name, img_loc, message])
+            # Generating the message to store in csv file
+            csv_result_msg_final.append([image_name, img_loc, message])
 
     return csv_result_msg_final

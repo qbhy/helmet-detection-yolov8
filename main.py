@@ -30,7 +30,7 @@ def processImages(image_path_list, image_name_list, image_storage_folder):
         - csv_result_msg_final: A list of messages containing the detection results for each image in the input list.
     """
 
-    box_annotator = sv.BoxAnnotator(thickness=2, text_thickness=1, text_scale=1)
+    box_annotator = sv.BoxAnnotator(text_thickness=1, text_scale=1)
 
     csv_result_msg_final = []
 
@@ -54,7 +54,8 @@ def processImages(image_path_list, image_name_list, image_storage_folder):
                 # 假设 detection 是一个包含多个值的元组或列表
                 # 并且 class_id 是第三个值
                 _, _, class_id, _, _, dict = detection
-                labels.append(dict["class_name"])
+                # labels.append("{} {}".format(dict["class_name"], class_id))
+                labels.append("{} {}".format(dict["class_name"], class_id))
         except Exception as e:
             print(e.args)
             return
